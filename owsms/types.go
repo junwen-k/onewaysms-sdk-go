@@ -72,5 +72,5 @@ type CheckTransactionStatusOutput struct {
 
 // CheckCreditBalanceOutput check credit balance output structure.
 type CheckCreditBalanceOutput struct {
-	CreditBalance int // Remaining credit balance for the account of this client's config.
+	CreditBalance float32 // Remaining credit balance for the account of this client's config.
 }

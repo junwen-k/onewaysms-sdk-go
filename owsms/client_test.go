@@ -344,7 +344,7 @@ func TestCheckCreditBalance(t *testing.T) {
 
 	t.Run("With success status", func(t *testing.T) {
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintln(w, "6500")
+			fmt.Fprintln(w, "6500.5")
 		}))
 		defer ts.Close()
 
@@ -353,7 +353,7 @@ func TestCheckCreditBalance(t *testing.T) {
 		output, _, err = svc.CheckCreditBalance()
 		assert.NoError(t, err)
 		assert.NotNil(t, output)
-		assert.Equal(t, 6500, output.CreditBalance)
+		assert.Equal(t, float32(6500.5), output.CreditBalance)
 	})
 
 	t.Run("With invalid user credentials", func(t *testing.T) {

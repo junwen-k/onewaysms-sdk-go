@@ -38,24 +38,30 @@ import (
 Initialize a new client using the `NewClient` function. For instance:
 
 ```go
-svc := owsms.NewClient(
-  "API_BASE_URL",
-  "API_USERNAME",
-  "API_PASSWORD",
-  "SENDER_ID",
-)
+func main() {
+	svc := owsms.NewClient(
+		"API_BASE_URL",
+		"API_USERNAME",
+		"API_PASSWORD",
+		"SENDER_ID",
+  )
+  // ...
+}
 ```
 
 Optionally, a new client with a custom HTTP client can be initialized using the `NewClientWithHTTP` function. For instance:
 
 ```go
-svc := owsms.NewClientWithHTTP(
-  "API_BASE_URL",
-  "API_USERNAME",
-  "API_PASSWORD",
-  "SENDER_ID",
-  &http.Client{Timeout: time.Second * 30},
-)
+func main() {
+	svc := owsms.NewClientWithHTTP(
+		"API_BASE_URL",
+		"API_USERNAME",
+		"API_PASSWORD",
+		"SENDER_ID",
+		&http.Client{Timeout: time.Second * 30},
+  )
+  // ...
+}
 ```
 
 ### Use case examples
@@ -63,91 +69,100 @@ svc := owsms.NewClientWithHTTP(
 1. **Send SMS** - Send SMS by calling OneWaySMS API gateway, returning mobile terminating ID(s) if request is successful.
 
    ```go
-    output, _, err := svc.SendSMS(&owsms.SendSMSInput{
-      Message:  "Hello, 世界",
-      MobileNo: []string{"60123456789", "60129876543"},
-    })
-    if err != nil {
-      if owErr, ok := err.(owerr.Error); ok {
-        switch owErr.Code() {
-        case owerr.RequestFailure:
-        // Handle RequestFailure
-        case owerr.InvalidCredentials:
-        // Handle InvalidCredentials
-        case owerr.InvalidSenderID:
-        // Handle InvalidSenderID
-        case owerr.InvalidMobileNo:
-        // Handle InvalidMobileNo
-        case owerr.InvalidLanguageType:
-        // Handle InvalidLanguageType
-        case owerr.InvalidMessageCharacters:
-        // Handle InvalidMessageCharacters
-        case owerr.InsufficientCreditBalance:
-        // Handle InsufficientCreditBalance
-        case owerr.UnknownError:
-          // Handle UnknownError
-        default:
+    func main() {
+      // ...
+      output, _, err := svc.SendSMS(&owsms.SendSMSInput{
+        Message:  "Hello, 世界",
+        MobileNo: []string{"60123456789", "60129876543"},
+      })
+      if err != nil {
+        if owErr, ok := err.(owerr.Error); ok {
+          switch owErr.Code() {
+          case owerr.RequestFailure:
+          // Handle RequestFailure
+          case owerr.InvalidCredentials:
+          // Handle InvalidCredentials
+          case owerr.InvalidSenderID:
+          // Handle InvalidSenderID
+          case owerr.InvalidMobileNo:
+          // Handle InvalidMobileNo
+          case owerr.InvalidLanguageType:
+          // Handle InvalidLanguageType
+          case owerr.InvalidMessageCharacters:
+          // Handle InvalidMessageCharacters
+          case owerr.InsufficientCreditBalance:
+          // Handle InsufficientCreditBalance
+          case owerr.UnknownError:
+            // Handle UnknownError
+          default:
+          }
+        } else {
+          // Handle Generic Error
         }
-      } else {
-        // Handle Generic Error
       }
-    }
 
-    // MTIDs - Mobile terminating IDs
-    fmt.Println(output.MTIDs)
+      // MTIDs - Mobile terminating IDs
+      fmt.Println(output.MTIDs)
+    }
    ```
 
 1. **Check MT Transaction Status** - Check mobile terminating transaction status based on mobile terminating ID provided. Mobile terminating ID can be obtained by calling send SMS API.
 
    ```go
-    output, _, err := svc.CheckTransactionStatus(&owsms.CheckTransactionStatusInput{
-      MTID: 145712470,
-    })
-    if err != nil {
-      if owErr, ok := err.(owerr.Error); ok {
-        switch owErr.Code() {
-        case owerr.MTInvalidNotFound:
-        // Handle MTInvalidNotFound
-        case owerr.MessageDeliveryFailure:
-        // Handle MessageDeliveryFailure
-        case owerr.UnknownError:
-          // Handle UnknownError
-        default:
+    func main() {
+      // ...
+      output, _, err := svc.CheckTransactionStatus(&owsms.CheckTransactionStatusInput{
+        MTID: 145712470,
+      })
+      if err != nil {
+        if owErr, ok := err.(owerr.Error); ok {
+          switch owErr.Code() {
+          case owerr.MTInvalidNotFound:
+          // Handle MTInvalidNotFound
+          case owerr.MessageDeliveryFailure:
+          // Handle MessageDeliveryFailure
+          case owerr.UnknownError:
+            // Handle UnknownError
+          default:
+          }
+        } else {
+          // Handle Generic Error
         }
-      } else {
-        // Handle Generic Error
       }
-    }
 
-    switch output.Status {
-    case owsms.MTTransactionStatusSuccess:
-      // Handle success status
-    case owsms.MTTransactionStatusTelcoDelivered:
-      // Handle telco delivered status
-    default:
+      switch output.Status {
+      case owsms.MTTransactionStatusSuccess:
+        // Handle success status
+      case owsms.MTTransactionStatusTelcoDelivered:
+        // Handle telco delivered status
+      default:
+      }
     }
    ```
 
 1. **Check Credit Balance**. Check remaining credit balance for the account in the client's config.
 
    ```go
-    output, _, err := svc.CheckCreditBalance()
-    if err != nil {
-      if owErr, ok := err.(owerr.Error); ok {
-        switch owErr.Code() {
-        case owerr.InvalidCredentials:
-        // Handle InvalidCredentials
-        case owerr.UnknownError:
-          // Handle UnknownError
-        default:
+    func main() {
+      // ...
+      output, _, err := svc.CheckCreditBalance()
+      if err != nil {
+        if owErr, ok := err.(owerr.Error); ok {
+          switch owErr.Code() {
+          case owerr.InvalidCredentials:
+          // Handle InvalidCredentials
+          case owerr.UnknownError:
+            // Handle UnknownError
+          default:
+          }
+        } else {
+          // Handle Generic Error
         }
-      } else {
-        // Handle Generic Error
       }
-    }
 
-    // CreditBalance - Remaining credit balance for this account
-    fmt.Println(output.CreditBalance)
+      // CreditBalance - Remaining credit balance for this account
+      fmt.Println(output.CreditBalance)
+    }
    ```
 
 ## License

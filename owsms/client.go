@@ -15,15 +15,15 @@ import (
 
 const version = "0.1.0"
 
-// Doer implements http.Client Do interface.
-type Doer interface {
+// doer implements http.Client Do interface.
+type doer interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
 // Client OneWaySMS client structure.
 // Based on specifications found in http://smsd2.onewaysms.sg/api.pdf.
 type Client struct {
-	client      Doer
+	client      doer
 	baseURL     string
 	apiUsername string
 	apiPassword string
@@ -42,7 +42,7 @@ func NewClient(baseURL, apiUsername, apiPassword, senderID string) *Client {
 }
 
 // NewClientWithHTTP initializes a new OneWaySMS client with custom http client.
-func NewClientWithHTTP(baseURL, apiUsername, apiPassword, senderID string, client Doer) *Client {
+func NewClientWithHTTP(baseURL, apiUsername, apiPassword, senderID string, client doer) *Client {
 	c := NewClient(baseURL, apiUsername, apiPassword, senderID)
 	c.client = client
 	return c
@@ -224,13 +224,13 @@ func (c *Client) CheckCreditBalance() (*CheckCreditBalanceOutput, *http.Response
 		return nil, resp, err
 	}
 
-	creditBalance, err := strconv.Atoi(strings.TrimSpace(string(b)))
+	creditBalance, err := strconv.ParseFloat(strings.TrimSpace(string(b)), 32)
 	if err != nil {
 		return nil, resp, owerr.New(owerr.UnknownError, "unknown error", resp.StatusCode)
 	}
 
 	if creditBalance >= 0 {
-		return &CheckCreditBalanceOutput{CreditBalance: creditBalance}, resp, nil
+		return &CheckCreditBalanceOutput{CreditBalance: float32(creditBalance)}, resp, nil
 	}
 
 	switch creditBalance {
